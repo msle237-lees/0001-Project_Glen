@@ -6,4 +6,5 @@ def run():
 	d = dev_connect()
 	print(d.find_all_devices())
 	dev = input("Enter device to connect to: ")
-	print(d.find_device_data(dev))
+	d.open_device(dev)
+	print(d.find_device_data())
