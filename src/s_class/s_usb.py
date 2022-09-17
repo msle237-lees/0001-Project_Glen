@@ -1,4 +1,4 @@
-import visa
+import pyvisa
 from dataclasses import dataclass
 import numpy
 
