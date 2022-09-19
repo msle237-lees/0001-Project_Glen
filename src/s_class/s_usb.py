@@ -1,5 +1,4 @@
 import pyvisa
-from dataclasses import dataclass
 import numpy
 
 
@@ -20,8 +19,8 @@ class dev_command:
         self.dd = self.dev.query("*IDN?")
         print(f"Connecting to {self.dd}")
 
-    def send_data(self, d):
+    def send_command(self, d):
         pass
 
-    def recv_data(self):
+    def recv_command(self):
         pass

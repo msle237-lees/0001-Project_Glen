@@ -2,10 +2,8 @@
 from src.s_class.s_usb import dev_find, dev_command
 
 
-dev = []
-num_of_dev = 0
-
 def run():
+	num_of_dev = 0
 	d = dev_find()
 	ld = d.find_all_devices()
 	print(ld)
@@ -20,3 +18,4 @@ def run():
 	elif num_of_dev == 1:
 		sig_gen_code = input("Enter device code to connect to Signal Generator: ")
 		dev.append(dev_command(sig_gen_code))
+	start_freq = input("Enter starting frequency: ")
