@@ -13,9 +13,9 @@ def run():
 	if num_of_dev == 2:
 		sig_gen_code = input("Enter device code to connect to Signal Generator: ")
 		os_code = input("Enter device code to connect to Oscilloscope: ")
-		dev.append(dev_command(sig_gen_code))
-		dev.append(dev_command(os_code))
+		d.append(dev_command(sig_gen_code))
+		d.append(dev_command(os_code))
 	elif num_of_dev == 1:
 		sig_gen_code = input("Enter device code to connect to Signal Generator: ")
-		dev.append(dev_command(sig_gen_code))
+		d.append(dev_command(sig_gen_code))
 	start_freq = input("Enter starting frequency: ")
