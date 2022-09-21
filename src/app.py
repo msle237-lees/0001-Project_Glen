@@ -2,23 +2,29 @@
 from src.s_class.s_usb import device
 
 
-def calculate_frequency_list(f_max, f_max_unit, f_min, f_min_unit, f_incr_val, f_incr_unit):
+def calculate_frequency_list(f_max, f_max_unit, f_min, f_min_unit, f_incr, f_incr_unit):
     # 5.1 f_list = empty list
     f_list = []
 
     # 5.2 determine how many zeros to add to f_max, f_min, f_incr_val
-
+    # mV, V, kHz, degrees
+    if 'k' in f_max_unit:
+        f_max = f_max * 1000
+    if 'k' in f_min_unit:
+        f_min = f_min * 1000
+    if 'k' in f_incr_unit:
+        f_incr = f_incr * 1000
 
     # 5.3 f_num_of_runs = (f_max - f_min) / f_incr_val
-
+    f_num_of_runs = (f_max - f_min) / f_incr
 
     # 5.4 for i in range(0, f_num_of_runs):
-
-
-    # 5.4.1 f_list.append(f_min + f_incr_val)
-
+    for i in range(0, f_num_of_runs):
+        # 5.4.1 f_list.append(f_min + f_incr_val)
+        f_list.append(f_min + f_incr_val)
 
     # 5.5 return f_list
+    return f_list
 
 def run():
     d1 = device()
@@ -61,6 +67,7 @@ def run():
 
     # 4.5 Ask for Frequency Incrementation Value
     f_incr = int(input("Enter frequency increment value: "))
+    f_incr_unit = input("Enter frequency increment value unit of measure: ")
 
     # 4.6 Ask for Vpp Value
     vpp_val = int(input("Enter Vpp value: "))
@@ -83,7 +90,8 @@ def run():
     chann_2_v_div_unit = input("Enter V/Div value unit of measure for channel 2: ")
 
     # 5. Run src.app.calculate_frequency_list() function
-
+    print(calculate_frequency_list(f_end, f_end_unit, f_start, f_start_unit, f_incr, f_incr_unit))
+    
     # 6. Send SPCI Commands to machines
 
     # 6.1 Call for s_usb.dev_command.frequency_set() function
