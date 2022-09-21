@@ -49,7 +49,7 @@
 ## Flowchart ##
 #### 0. Detect Test Equipment ####
 #### 1. Connect to Test Equipment ####
-#### 2. Define Channel 1 as Input Value on Signal Generator ####
+#### 2. Configure Channels on Signal Generator ####
 #### 3. Define Channel 2 as Output Value on Signal Generator ####
 #### 4. Collect user input: ####
 #### ___ 4.1 Ask for Starting Frequency ####
