@@ -46,11 +46,11 @@ def run():
     # 2. Configure Channels on Signal Generator
     channel_num_signal_gen = int(input("Enter number of channels used on signal generator (1 or 2): "))
     if channel_num_signal_gen == 1:
-        d1.Send_command(":CHANnel<1>:OUTPut {1}")
-        d1.Send_command(":CHANnel<2>:OUTPut {0}")
+        d1.Send_command("CHAN1:OUTPUT\s1")
+        d1.Send_command("CHAN2:OUTPUT\s0")
     else:
-        d1.Send_command(":CHANnel<1>:OUTPut {1}")
-        d1.Send_command(":CHANnel<2>:OUTPut {1}")
+        d1.Send_command("CHAN1:OUTPUT\s1")
+        d1.Send_command("CHAN2:OUTPUT\s1")
 
     # 3. Configure Channels on Oscilloscope
 
