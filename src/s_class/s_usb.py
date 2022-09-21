@@ -12,11 +12,12 @@ class device:
 
     def Connect(self, HWID):
         self.HWID = HWID
-        self.dev = self.rm.open_resource(self.HWID, write_termination = '\n', read_termination='\n')
+        self.dev = self.rm.open_resource(self.HWID, write_termination = '\n', read_termination='\n', break_on_termchar='\n')
         print(f"Connecting to {self.dev}")
 
     def Send_command(self, cmd):
-        self.dev.write(cmd)
+        self.dev.write(cmd, break_on_termchar='\n')
+        print()
 
     def Frequency_set(self, freq):
         pass
