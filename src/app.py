@@ -34,10 +34,14 @@ def run():
     print(dev_list)
 
     # 1. Connect to Test Equipment
+    devices = []
+    for i in range(len(dev_list)):
+        devices.append([i, dev_list[i]])
+    print(devices)
     dev1 = input("Enter device 1 (Signal Gen) UUID: ")
-    d1.Connect(dev1)
+    d1.Connect(devices[i][1])
     dev2 = input("Enter device 2 (Oscilloscope) UUID: ")
-    d2.Connect(dev2)
+    d2.Connect(devices[i][1])
 
     # 2. Configure Channels on Signal Generator
     channel_num_signal_gen = int(input("Enter number of channels used on signal generator (1 or 2): "))
@@ -91,7 +95,7 @@ def run():
 
     # 5. Run src.app.calculate_frequency_list() function
     print(calculate_frequency_list(f_end, f_end_unit, f_start, f_start_unit, f_incr, f_incr_unit))
-    
+
     # 6. Send SPCI Commands to machines
 
     # 6.1 Call for s_usb.dev_command.frequency_set() function

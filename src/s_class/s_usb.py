@@ -16,8 +16,7 @@ class device:
         print(f"Connecting to {self.dev}")
 
     def Send_command(self, cmd):
-        self.ret = self.dev.query(cmd)
-        return self.ret
+        self.dev.write(cmd)
 
     def Frequency_set(self, freq):
         pass
