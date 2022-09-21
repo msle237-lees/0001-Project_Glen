@@ -38,9 +38,9 @@ def run():
     for i in range(len(dev_list)):
         devices.append([i, dev_list[i]])
     print(devices)
-    dev1 = input("Enter device 1 (Signal Gen) UUID: ")
+    dev1 = int(input("Enter device 1 (Signal Gen) UUID: "))
     d1.Connect(devices[dev1][1])
-    dev2 = input("Enter device 2 (Oscilloscope) UUID: ")
+    dev2 = int(input("Enter device 2 (Oscilloscope) UUID: "))
     d2.Connect(devices[dev2][1])
 
     # 2. Configure Channels on Signal Generator
