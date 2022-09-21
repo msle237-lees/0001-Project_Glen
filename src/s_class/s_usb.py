@@ -16,7 +16,7 @@ class device:
         print(f"Connecting to {self.dev}")
 
     def Send_command(self, cmd):
-        self.dev.write(cmd, break_on_termchar='\n')
+        self.dev.write(cmd)
         print()
 
     def Frequency_set(self, freq):
