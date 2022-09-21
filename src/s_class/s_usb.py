@@ -12,7 +12,7 @@ class device:
 
     def Connect(self, HWID):
         self.HWID = HWID
-        self.dev = self.rm.open_resource(self.HWID)
+        self.dev = self.rm.open_resource(self.HWID, write_termination = '\n', read_termination='\n')
         print(f"Connecting to {self.dev}")
 
     def Send_command(self, cmd):
