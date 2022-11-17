@@ -36,30 +36,30 @@ def determine_wave_type(in_data):
     return out
 
 def run():
-    # d1 = device()
-    # d2 = device()
-    # # 0. Detect Test Equipment
-    # dev_list = d1.Detect()
-    # print(dev_list)
+    d1 = device()
+    d2 = device()
+    # 0. Detect Test Equipment
+    dev_list = d1.Detect()
+    print(dev_list)
 
     # 1. Connect to Test Equipment
     devices = []
-    # for i in range(len(dev_list)):
-    #     devices.append([i, dev_list[i]])
+    for i in range(len(dev_list)):
+        devices.append([i, dev_list[i]])
     print(devices)
     dev1 = int(input("Enter device 1 (Signal Gen) UUID (0 or 1): "))
-    # d1.Connect(devices[dev1][1])
+    d1.Connect(devices[dev1][1])
     dev2 = int(input("Enter device 2 (Oscilloscope) UUID (0 or 1): "))
-    # d2.Connect(devices[dev2][1])
+    d2.Connect(devices[dev2][1])
 
     # 2. Configure Channels on Signal Generator
     channel_num_signal_gen = int(input("Enter number of channels used on signal generator (1 or 2): "))
-    # if channel_num_signal_gen == 1:
-    #     d1.Send_command("CHAN1:OUTPUT\s1")
-    #     d1.Send_command("CHAN2:OUTPUT\s0")
-    # else:
-    #     d1.Send_command("CHAN1:OUTPUT\s1")
-    #     d1.Send_command("CHAN2:OUTPUT\s1")
+    if channel_num_signal_gen == 1:
+        d1.Send_command("CHAN1:OUTPUT\s1")
+        d1.Send_command("CHAN2:OUTPUT\s0")
+    else:
+        d1.Send_command("CHAN1:OUTPUT\s1")
+        d1.Send_command("CHAN2:OUTPUT\s1")
 
     # 3. Configure Channels on Oscilloscope
 
@@ -85,25 +85,25 @@ def run():
     # 4.6 Ask for Base Wave
     b_wave = input("Enter Base Wave Type: ")
 
-    # # 4.7 Ask for Vpp Value
-    # vpp_val = int(input("Enter Vpp value (Whole Number: "))
-    # vpp_unit = input("Enter Vpp value unit of measure: ")
-    #
-    # # 4.8 Ask for Offset Value
-    # offset_val = int(input("Enter offset value (Whole Number: "))
-    # offset_unit = input("Enter offset value unit of measure: ")
-    #
-    # # 4.9 Ask for Phase Value
-    # dcphase_val = int(input("Enter DC Phase value (Whole Number: "))
-    # dcphase_unit = input("Enter DC Phase value unit of measure: ")
-    #
-    # # 4.10 Ask for Oscilloscope Channel 1 V/div
-    # chann_1_v_div_val = int(input("Enter V/Div value for channel 1 (Whole Number: "))
-    # chann_1_v_div_unit = input("Enter V/Div value unit of measure for channel 1: ")
-    #
-    # # 4.11 Ask for Oscilloscope Channel 2 V/div
-    # chann_2_v_div_val = int(input("Enter V/Div value for channel 2 (Whole Number: "))
-    # chann_2_v_div_unit = input("Enter V/Div value unit of measure for channel 2: ")
+    # 4.7 Ask for Vpp Value
+    vpp_val = int(input("Enter Vpp value (Whole Number: "))
+    vpp_unit = input("Enter Vpp value unit of measure: ")
+
+    # 4.8 Ask for Offset Value
+    offset_val = int(input("Enter offset value (Whole Number: "))
+    offset_unit = input("Enter offset value unit of measure: ")
+
+    # 4.9 Ask for Phase Value
+    dcphase_val = int(input("Enter DC Phase value (Whole Number: "))
+    dcphase_unit = input("Enter DC Phase value unit of measure: ")
+
+    # 4.10 Ask for Oscilloscope Channel 1 V/div
+    chann_1_v_div_val = int(input("Enter V/Div value for channel 1 (Whole Number: "))
+    chann_1_v_div_unit = input("Enter V/Div value unit of measure for channel 1: ")
+
+    # 4.11 Ask for Oscilloscope Channel 2 V/div
+    chann_2_v_div_val = int(input("Enter V/Div value for channel 2 (Whole Number: "))
+    chann_2_v_div_unit = input("Enter V/Div value unit of measure for channel 2: ")
 
     # 5. Run src.app.calculate_frequency_list() function
     f_list = calculate_frequency_list(f_end, f_end_unit, f_start, f_start_unit, f_incr, f_incr_unit)
@@ -116,6 +116,7 @@ def run():
     # 6. Send SPCI Commands to machines
     # 6.1 Call for s_usb.wave_type_set() function
     # :CHANnel<n>:BASE:WAVe { SINe | SQUare | PULSe | RAMP | ARB | NOISe | DC }
+
 
     # 6.2 Call for s_usb.frequency_set() function
     # :CHANnel<n>:BASE:FREQuency {<freq>}
