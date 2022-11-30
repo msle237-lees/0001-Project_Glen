@@ -13,7 +13,7 @@
 * Output location
 * Plot Output Type
 
-### What he has given me: (Example)###
+### What he has given me: (Example) ###
 * Sig Gen:
 	* Channel 1:
 		* Type: Sine Wave
