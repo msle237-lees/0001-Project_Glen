@@ -45,6 +45,8 @@ class hid_device:
         return freq_list
 
 def main():
+    rm = visa.ResourceManager()
+    
     sg.theme('Dark')   # Add a touch of color
 
     # All the stuff inside your window.
@@ -64,7 +66,7 @@ def main():
                                 ]
 
     Oscilloscope_Tab = [    [sg.Text('Oscilloscope Settings', justification='left', font=("Helvetica", 20))],
-                            [sg.Text('Oscilloscope ID Address: '), sg.DropDown([], size=(30, 1), key='-OSC_ID-')],
+                            [sg.Text('Oscilloscope ID Address: '), sg.DropDown(rm.list_resources(), size=(30, 1), key='-OSC_ID-')],
                             [sg.TabGroup([[sg.Tab('Channel 1', Oscilloscope_Channel_1_Tab, expand_x=True), sg.Tab('Channel 2', Oscilloscope_Channel_2_Tab, expand_x=True)]], size=(1280, 720), key='-OSC_TABGROUP-')]
                         ]
 
@@ -91,7 +93,7 @@ def main():
                                     ]
 
     Signal_Generator_Tab = [    [sg.Text('Signal Generator', font=("Helvetica", 20))],
-                                [sg.Text('Signal Generator ID Address: '), sg.DropDown([], size=(30, 1), key='-SG_ID-')],
+                                [sg.Text('Signal Generator ID Address: '), sg.DropDown(rm.list_resources(), size=(30, 1), key='-SG_ID-')],
                                 [sg.TabGroup([[sg.Tab('Channel 1', Signal_Generator_Channel_1_Tab, expand_x=True)], [sg.Tab('Channel 2', Signal_Generator_Channel_2_Tab, expand_x=True)]], size=(1280, 720), key='-SG_TABGROUP-')]
                             ]
 
@@ -129,6 +131,8 @@ def main():
                                 values['-OSC_CH1_MEAS_FREQ-']]
             print(OSC_CHANN_1_SETT)
 
+            # Bind the hid_device class object to the oscilloscope ID address
+            
             # Add the send command function here with proper arguments to send the settings to the oscilloscope for channel 1
 
         elif event == '-OSC_CH2_CONFIRM-':
@@ -159,6 +163,7 @@ def main():
                                 values['-SG_CHAN_1_OFFSET_UNIT-']]
             print(SG_CHANN_1_SETT)
 
+            # Bind the hid_device class object to the signal generator ID address
             # Add the send command function here with proper arguments to send the settings to the signal generator for channel 1
             # Add the calculate frequency function here with proper arguments to calculate the frequency for channel 1
 
