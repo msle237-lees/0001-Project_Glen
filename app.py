@@ -11,6 +11,8 @@ import numpy as np
 import pandas as pd
 import pyvisa as visa
 
+
+
 class hid_device:
     def __init__(self):
         self.dev = None
@@ -23,11 +25,9 @@ class hid_device:
         return self.dev_list
 
     def Connect(self, dev_name):
-        self.dev = visa.ResourceManager().open_resource(dev_name)
-        self.dev_name = dev_name
-        self.dev_serial = self.dev.query("*IDN?")
-        print(self.dev_serial)
-        return self.dev
+        self.HWID = dev_name
+        self.dev = self.rm.open_resource(self.HWID, write_termination = '\n', read_termination='\n')
+        print(f"Connecting to {self.dev}")
     
     def Send_command(self, command):
         self.dev.write(command)
@@ -38,15 +38,41 @@ class hid_device:
         print(x)
         return x
 
-    def calculate_Frequency(self, freq_min, freq_max, freq_step):
-        freq_list = []
-        for i in range(freq_min, freq_max, freq_step):
+def calculate_Frequency(freq_min, freq_min_unit, freq_max, freq_max_unit, freq_step, freq_step_unit):
+    freq_list = []
+    if freq_min is not None and freq_max is not None and freq_step is not None:
+        if freq_min_unit == 'Hz':
+            freq_min = int(freq_min)
+        elif freq_min_unit == 'kHz':
+            freq_min = int(freq_min) * 1000
+        elif freq_min_unit == 'MHz':
+            freq_min = int(freq_min) * 1000000
+        elif freq_min_unit == 'GHz':
+            freq_min = int(freq_min) * 1000000000
+        if freq_max_unit == 'Hz':
+            freq_max = int(freq_max)
+        elif freq_max_unit == 'kHz':
+            freq_max = int(freq_max) * 1000
+        elif freq_max_unit == 'MHz':
+            freq_max = int(freq_max) * 1000000
+        elif freq_max_unit == 'GHz':
+            freq_max = int(freq_max) * 1000000000
+        if freq_step_unit == 'Hz':
+            freq_step = int(freq_step)
+        elif freq_step_unit == 'kHz':
+            freq_step = int(freq_step) * 1000
+        elif freq_step_unit == 'MHz':
+            freq_step = int(freq_step) * 1000000
+        elif freq_step_unit == 'GHz':
+            freq_step = int(freq_step) * 1000000000
+
+        for i in range(freq_min, freq_max + freq_step, freq_step):
             freq_list.append(i)
-        return freq_list
+    return freq_list
 
 def main():
     rm = visa.ResourceManager()
-    
+
     sg.theme('Dark')   # Add a touch of color
 
     # All the stuff inside your window.
@@ -71,7 +97,7 @@ def main():
                         ]
 
     Signal_Generator_Channel_1_Tab = [  [sg.Text('Signal Generator Channel 1 Settings', size=(30, 1), font=("Helvetica", 20)), sg.Graph(canvas_size=(30, 30), graph_bottom_left=(0, 0), graph_top_right=(30, 30), background_color='red', key='-SG_CH1_GRAPH-')],
-                                        [sg.Checkbox('Enable', default=False, size=(15,1), key='SG_CHAN_1_ENABLE')],
+                                        [sg.Checkbox('Enable', default=False, size=(25,1), font=("Helvetica", 20), key='SG_CHAN_1_ENABLE')],
                                         [sg.Text('Signal Type: '), sg.DropDown(['Sine', 'Square', 'Triangle', 'Ramp', 'Pulse', 'Noise', 'DC'], size=(10, 1), key='-SG_CHAN_1_SIGNAL_TYPE-')],
                                         [sg.Text('Frequency Min: '), sg.InputText(key='-SG_CHAN_1_FREQ_MIN_IN-'), sg.DropDown(['Hz', 'kHz', 'MHz', 'GHz'], size=(10, 1), key='-SG_CHAN_1_FREQ_MIN_UNIT-')],
                                         [sg.Text('Frequency Max: '), sg.InputText(key='-SG_CHAN_1_FREQ_MAX_IN-'), sg.DropDown(['Hz', 'kHz', 'MHz', 'GHz'], size=(10, 1), key='-SG_CHAN_1_FREQ_MAX_UNIT-')],
@@ -82,7 +108,7 @@ def main():
                                     ]
 
     Signal_Generator_Channel_2_Tab = [  [sg.Text('Signal Generator Channel 2 Settings', size=(30, 1), font=("Helvetica", 20)), sg.Graph(canvas_size=(30, 30), graph_bottom_left=(0, 0), graph_top_right=(30, 30), background_color='blue', key='-SG_CH2_GRAPH-')],
-                                        [sg.Checkbox('Enable', default=False, size=(15,1), key='SG_CHAN_2_ENABLE')],
+                                        [sg.Checkbox('Enable', default=False, size=(25,1), font=("Helvetica", 20), key='SG_CHAN_2_ENABLE')],
                                         [sg.Text('Signal Type: '), sg.DropDown(['Sine', 'Square', 'Triangle', 'Ramp', 'Pulse', 'Noise', 'DC'], size=(10, 1), key='-SG_CHAN_2_SIGNAL_TYPE-')],
                                         [sg.Text('Frequency Min: '), sg.InputText(key='-SG_CHAN_2_FREQ_MIN_IN-'), sg.DropDown(['Hz', 'kHz', 'MHz', 'GHz'], size=(10, 1), key='-SG_CHAN_2_FREQ_MIN_UNIT-')],
                                         [sg.Text('Frequency Max: '), sg.InputText(key='-SG_CHAN_2_FREQ_MAX_IN-'), sg.DropDown(['Hz', 'kHz', 'MHz', 'GHz'], size=(10, 1), key='-SG_CHAN_2_FREQ_MAX_UNIT-')],
@@ -132,8 +158,11 @@ def main():
             print(OSC_CHANN_1_SETT)
 
             # Bind the hid_device class object to the oscilloscope ID address
-            
+            oscilloscope_object = hid_device()
+            oscilloscope_object.Connect(OSC_CHANN_1_SETT[0])
+
             # Add the send command function here with proper arguments to send the settings to the oscilloscope for channel 1
+
 
         elif event == '-OSC_CH2_CONFIRM-':
             OSC_CHANN_2_SETT = [values['-OSC_ID-'],
@@ -166,6 +195,8 @@ def main():
             # Bind the hid_device class object to the signal generator ID address
             # Add the send command function here with proper arguments to send the settings to the signal generator for channel 1
             # Add the calculate frequency function here with proper arguments to calculate the frequency for channel 1
+            SG_CHANN_1_FREQ = calculate_Frequency(SG_CHANN_1_SETT[1], SG_CHANN_1_SETT[2], SG_CHANN_1_SETT[3], SG_CHANN_1_SETT[4], SG_CHANN_1_SETT[5], SG_CHANN_1_SETT[6])
+            print(SG_CHANN_1_FREQ)
 
         elif event == '-SG_CHAN_2_CONFIRM-':
             SG_CHANN_2_SETT = [values['-SG_ID-'],
@@ -183,6 +214,8 @@ def main():
 
             # Add the send command function here with proper arguments to send the settings to the signal generator for channel 2
             # Add the calculate frequency function here with proper arguments to calculate the frequency for channel 2
+            SG_CHANN_2_FREQ = calculate_Frequency(SG_CHANN_2_SETT[1], SG_CHANN_2_SETT[2], SG_CHANN_2_SETT[3], SG_CHANN_2_SETT[4], SG_CHANN_2_SETT[5], SG_CHANN_2_SETT[6])
+            print(SG_CHANN_2_FREQ)
 
         elif event == '-OUTPUT_CONFIRM-':
             OUTPUT_SETT = [ values['-OUTPUT_FILE_NAME-'],
@@ -202,7 +235,7 @@ def main():
 
             # Add the send command function here with proper arguments to send the settings to the signal generator and oscilloscope to stop the measurement
 
-        elif event == sg.WIN_CLOSED: # if user closes window or clicks cancel
+        elif event == sg.WIN_CLOSED: # if user closes window
             break
     window.close()
 
