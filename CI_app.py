@@ -27,13 +27,18 @@ class CI_app:
             # Ask user for command to send and to which device
             self.cmd = input("Enter the command to send: ")
             self.dev = int(input("Enter the device number (0 for oscilloscope, 1 for signal generator): "))
+            self.option = int(input("Query or Read (0 or 1): "))
 
             # Send the command to the device
             time_before = perf_counter()
-            if self.dev == 0:
+            if self.dev == 0 and self.option == 0:
+                self.resp = self.osc.query(self.cmd)
+            elif self.dev == 1 and self.option == 0:
+                self.resp = self.sig.query(self.cmd)
+            elif self.dev == 0 and self.option == 1:
                 self.resp = self.osc.write(self.cmd)
-            elif self.dev == 1:
-                self.resp = self.sig.write(self.cmd)
+            elif self.dev == 1 and self.option == 1:
+                self.resp = self.osc.write(self.cmd)
             print(f"Response: {self.resp} in {perf_counter() - time_before} seconds")
 
 ci = CI_app()
