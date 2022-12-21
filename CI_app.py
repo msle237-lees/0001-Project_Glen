@@ -25,6 +25,11 @@ class CI_app:
     def run(self):
         while True:
             # Ask user for command to send and to which device
+            q = int(input("Quit? (0 or 1 == No or Yes): "))
+
+            if q == 1:
+                quit()
+
             self.cmd = input("Enter the command to send: ")
             self.dev = int(input("Enter the device number (0 for oscilloscope, 1 for signal generator): "))
             self.option = int(input("Query or Read (0 or 1): "))
