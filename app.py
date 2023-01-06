@@ -6,14 +6,19 @@
 # 5. Adding Acquistion mode
 # 6. Adding the Option for short delay between each measurement cycle
 
+import math
 import os
 import sys
 import time
 
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import PySimpleGUI as sg
 import pyvisa as visa
+
+matplotlib.use('TkAgg')
 
 # define the resource manager
 global resource_manager
@@ -46,6 +51,12 @@ class hid_device:
     def Query_Command(self, command):
         x = self.dev.query(command) 
         return(x)
+
+def draw_figure(canvas, figure):
+    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
+    figure_canvas_agg.draw()
+    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+    return figure_canvas_agg
 
 def calculate_Frequency(freq, unit):
     if unit == 'Hz':
@@ -179,7 +190,7 @@ def main():
 
     Execution_Tab = [   [sg.Text('Execution', font=("Helvetica", 20))],
                         [sg.Button('Execute', key='-EXECUTE-'), sg.Button('Stop', key='-STOP-')],
-                        [sg.Graph(canvas_size=(1000, 720), graph_bottom_left=(0, 0), graph_top_right=(1000, 720), background_color='darkgray', key='-OUTPUT_GRAPH-'), sg.Table([], headings=['Frequency', 'Amplitude'], key='-OUTPUT_TABLE-', size=(320, 720))]
+                        [sg.Graph(canvas_size=(1000, 720), graph_bottom_left=(0, 0), graph_top_right=(1000, 720), background_color='darkgray', key='-OUTPUT_GRAPH-'), sg.Table([], headings=['Frequency', 'Decibel'], key='-OUTPUT_TABLE-', size=(320, 720))]
                     ]
 
     layout = [  [sg.Text('0001-Project_Glen', font=("Helvetica", 25))],
@@ -257,6 +268,9 @@ def main():
             OUTPUT_SETT = [ values['-OUTPUT_FILE_NAME-'],                           # 0
                             values['-OUTPUT_FILE_FORMAT-'],                         # 1
                             values['-OUTPUT_FILE_LOCATION-'] ]                      # 2
+            Output_file = os.path.join(OUTPUT_SETT[2], OUTPUT_SETT[0])
+            Output_type = OUTPUT_SETT[1]
+            
 
         elif event == '-EXECUTE-':
             # Add the send command function here with proper arguments to send the settings to the signal generator and oscilloscope to start the measurement
@@ -310,6 +324,7 @@ def main():
             chan_2_phase = []
 
             # for loop in range(0, SG_CHANN_1_FREQ)
+            decibel = []
             for i in range(0, len(SG_CHANN_1_FREQ)):
                 oscilloscope_object.Send_Command(':TIM:MAIN:SCAL ' + str(1/(6*SG_CHANN_1_FREQ[i])))
 
@@ -331,12 +346,22 @@ def main():
                     chan_2_vpp.append(oscilloscope_object.Query_Command(':MEAS:STAT:ITEM? CURR,VPP,CHAN2'))
                     chan_2_phase.append(oscilloscope_object.Query_Command(':MEAS:STAT:ITEM? CURR,RPH,CHAN2,CHAN1'))
 
-            print('chan_1_freq     chan_1_vpp     chan_2_vpp     chan_2_freq     chan_2_phase')
-            for i in range(len(chan_1_vpp)):
-                print(chan_1_freq[i], '     ',chan_1_vpp[i], '     ', chan_2_vpp[i], '     ', chan_2_freq[i], '     ', chan_2_phase[i])
+                decibel.append(20*math.log10(float(chan_2_vpp[i])/float(chan_1_vpp[i])))
+                window['-OUTPUT_TABLE-'].update([SG_CHANN_1_FREQ[i], decibel[i]])
 
             # Compile the results into a single 2D array and update the results table in the results window
+            vpp_ratio = [float(i)/float(j) for i, j in zip(chan_2_vpp, chan_1_vpp)]
+            results = list(zip(chan_1_freq, chan_1_vpp, chan_2_vpp, chan_2_freq, chan_2_phase, vpp_ratio, decibel))
+            df = pd.DataFrame(results, columns=['Channel 1 Frequency', 'Channel 1 Vpp', 'Channel 2 Vpp', 'Channel 2 Frequency', 'Channel 2 Phase', 'Vpp Ratio', 'Decibel'])
+            df.to_csv(Output_file + Output_type, encoding='utf-8', index=False)
+            plt.xscale('log')
+            plt.plot(df['Channel 1 Frequency'], df['Decibel'])
+            plt.xlabel('Frequency (Hz)')
+            plt.ylabel('Decibel')
+            plt.savefig(Output_file + '.png')
+            window['-OUTPUT_GRAPH-'].update(Output_file + '.png')
 
+            
         elif event == '-STOP-':
             # Add the send command function here with proper arguments to send the settings to the signal generator and oscilloscope to stop the measurement
             signal_generator_object.Send_Command(':SYST:LOCK 0')
