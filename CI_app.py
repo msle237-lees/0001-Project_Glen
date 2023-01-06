@@ -32,7 +32,7 @@ class CI_app:
 
             self.cmd = input("Enter the command to send: ")
             self.dev = int(input("Enter the device number (0 for oscilloscope, 1 for signal generator): "))
-            self.option = int(input("Query or Read (0 or 1): "))
+            self.option = int(input("Query or Write (0 or 1): "))
 
             # Send the command to the device
             time_before = perf_counter()
